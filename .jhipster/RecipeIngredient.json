@@ -1,0 +1,42 @@
+{
+  "name": "RecipeIngredient",
+  "fields": [
+    {
+      "fieldName": "quantity",
+      "fieldType": "Double"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "product",
+      "otherEntityRelationshipName": "recipeIngredient",
+      "relationshipName": "product"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "productUnit",
+      "otherEntityRelationshipName": "recipeIngredient",
+      "relationshipName": "productUnit"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "recipe",
+      "otherEntityRelationshipName": "recipeIngredient",
+      "relationshipName": "recipe"
+    }
+  ],
+  "entityTableName": "recipe_ingredient",
+  "dto": "no",
+  "pagination": "no",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["gateway", "products"],
+  "microserviceName": "products",
+  "clientRootFolder": "products",
+  "databaseType": "sql",
+  "changelogDate": "20210430121145"
+}

@@ -1,0 +1,47 @@
+{
+  "name": "GroceryItem",
+  "fields": [
+    {
+      "fieldName": "quantity",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "groceryItem",
+      "relationshipName": "user",
+      "otherEntityField": "login"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "product",
+      "otherEntityRelationshipName": "groceryItem",
+      "relationshipName": "product"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "productUnit",
+      "otherEntityRelationshipName": "groceryItem",
+      "relationshipName": "unit"
+    }
+  ],
+  "entityTableName": "grocery_item",
+  "dto": "no",
+  "pagination": "infinite-scroll",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["gateway", "products"],
+  "microserviceName": "products",
+  "clientRootFolder": "products",
+  "databaseType": "sql",
+  "changelogDate": "20210430121045"
+}
