@@ -6,7 +6,7 @@
     <!--
         Added the constraints for entity GroceryItem.
     -->
-    <changeSet id="20210430121045-2" author="jhipster">
+    <changeSet id="20210430142018-2" author="jhipster">
 
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="grocery_item"

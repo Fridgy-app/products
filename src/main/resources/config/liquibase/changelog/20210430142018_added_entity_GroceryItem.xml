@@ -7,15 +7,27 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <!--
-        Added the entity ProductCategory.
+        Added the entity GroceryItem.
     -->
-    <changeSet id="20210430121545-1" author="jhipster">
-        <createTable tableName="product_category">
+    <changeSet id="20210430142018-1" author="jhipster">
+        <createTable tableName="grocery_item">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="ux_product_category__name" />
+            <column name="quantity" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_id" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="product_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="unit_id" type="bigint">
+                <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -31,13 +43,14 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20210430121545-1-data" author="jhipster" context="faker">
+    <changeSet id="20210430142018-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/product_category.csv"
+                  file="config/liquibase/fake-data/grocery_item.csv"
                   separator=";"
-                  tableName="product_category">
+                  tableName="grocery_item">
             <column name="id" type="numeric"/>
-            <column name="name" type="string"/>
+            <column name="quantity" type="numeric"/>
+            <column name="description" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>
