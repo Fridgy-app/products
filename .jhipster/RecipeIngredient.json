@@ -22,7 +22,7 @@
     {
       "relationshipType": "many-to-one",
       "otherEntityName": "recipe",
-      "otherEntityRelationshipName": "recipeIngredient",
+      "otherEntityRelationshipName": "recipeIngredients",
       "relationshipName": "recipe"
     }
   ],

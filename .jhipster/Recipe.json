@@ -17,7 +17,7 @@
       "relationshipType": "one-to-many",
       "otherEntityName": "recipeIngredient",
       "otherEntityRelationshipName": "recipe",
-      "relationshipName": "recipeIngredient"
+      "relationshipName": "recipeIngredients"
     }
   ],
   "entityTableName": "recipe",

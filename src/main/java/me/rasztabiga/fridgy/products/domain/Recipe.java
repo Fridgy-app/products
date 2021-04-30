@@ -86,13 +86,13 @@ public class Recipe implements Serializable {
         return this;
     }
 
-    public Recipe addRecipeIngredient(RecipeIngredient recipeIngredient) {
+    public Recipe addRecipeIngredients(RecipeIngredient recipeIngredient) {
         this.recipeIngredients.add(recipeIngredient);
         recipeIngredient.setRecipe(this);
         return this;
     }
 
-    public Recipe removeRecipeIngredient(RecipeIngredient recipeIngredient) {
+    public Recipe removeRecipeIngredients(RecipeIngredient recipeIngredient) {
         this.recipeIngredients.remove(recipeIngredient);
         recipeIngredient.setRecipe(null);
         return this;
