@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import me.rasztabiga.fridgy.products.domain.Recipe;
 import me.rasztabiga.fridgy.products.repository.RecipeRepository;
-import me.rasztabiga.fridgy.products.repository.UserRepository;
 import me.rasztabiga.fridgy.products.service.RecipeService;
 import me.rasztabiga.fridgy.products.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
@@ -44,12 +43,9 @@ public class RecipeResource {
 
     private final RecipeRepository recipeRepository;
 
-    private final UserRepository userRepository;
-
-    public RecipeResource(RecipeService recipeService, RecipeRepository recipeRepository, UserRepository userRepository) {
+    public RecipeResource(RecipeService recipeService, RecipeRepository recipeRepository) {
         this.recipeService = recipeService;
         this.recipeRepository = recipeRepository;
-        this.userRepository = userRepository;
     }
 
     /**
@@ -64,10 +60,6 @@ public class RecipeResource {
         log.debug("REST request to save Recipe : {}", recipe);
         if (recipe.getId() != null) {
             throw new BadRequestAlertException("A new recipe cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        if (recipe.getUser() != null) {
-            // Save user in case it's new and only exists in gateway
-            userRepository.save(recipe.getUser());
         }
         Recipe result = recipeService.save(recipe);
         return ResponseEntity
@@ -103,10 +95,6 @@ public class RecipeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        if (recipe.getUser() != null) {
-            // Save user in case it's new and only exists in gateway
-            userRepository.save(recipe.getUser());
-        }
         Recipe result = recipeService.save(recipe);
         return ResponseEntity
             .ok()
@@ -140,11 +128,6 @@ public class RecipeResource {
 
         if (!recipeRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        if (recipe.getUser() != null) {
-            // Save user in case it's new and only exists in gateway
-            userRepository.save(recipe.getUser());
         }
 
         Optional<Recipe> result = recipeService.partialUpdate(recipe);

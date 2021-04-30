@@ -13,7 +13,6 @@ import javax.persistence.EntityManager;
 import me.rasztabiga.fridgy.products.IntegrationTest;
 import me.rasztabiga.fridgy.products.domain.Recipe;
 import me.rasztabiga.fridgy.products.repository.RecipeRepository;
-import me.rasztabiga.fridgy.products.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,6 @@ class RecipeResourceIT {
 
     @Autowired
     private RecipeRepository recipeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private EntityManager em;

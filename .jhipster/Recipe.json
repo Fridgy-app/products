@@ -18,13 +18,6 @@
       "otherEntityName": "recipeIngredient",
       "otherEntityRelationshipName": "recipe",
       "relationshipName": "recipeIngredient"
-    },
-    {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "recipe",
-      "relationshipName": "user",
-      "otherEntityField": "login"
     }
   ],
   "entityTableName": "recipe",
