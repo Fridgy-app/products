@@ -25,7 +25,7 @@ public class RecipeIngredient implements Serializable {
     private Double quantity;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "productCategory", "productUnit" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "productUnits", "productCategory" }, allowSetters = true)
     private Product product;
 
     @ManyToOne

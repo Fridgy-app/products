@@ -13,16 +13,17 @@
   ],
   "relationships": [
     {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "productUnit",
+      "otherEntityRelationshipName": "product",
+      "relationshipName": "productUnit",
+      "ownerSide": true
+    },
+    {
       "relationshipType": "many-to-one",
       "otherEntityName": "productCategory",
       "otherEntityRelationshipName": "product",
       "relationshipName": "productCategory"
-    },
-    {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "productUnit",
-      "otherEntityRelationshipName": "product",
-      "relationshipName": "productUnit"
     }
   ],
   "entityTableName": "product",

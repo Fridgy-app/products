@@ -2,6 +2,8 @@ package me.rasztabiga.fridgy.products.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -29,13 +31,19 @@ public class Product implements Serializable {
     @Column(name = "ean_code")
     private String eanCode;
 
-    @ManyToOne
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JoinTable(
+        name = "rel_product__product_unit",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_unit_id")
+    )
     @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
-    private ProductCategory productCategory;
+    private Set<ProductUnit> productUnits = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
-    private ProductUnit productUnit;
+    private ProductCategory productCategory;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -77,6 +85,31 @@ public class Product implements Serializable {
         this.eanCode = eanCode;
     }
 
+    public Set<ProductUnit> getProductUnits() {
+        return this.productUnits;
+    }
+
+    public Product productUnits(Set<ProductUnit> productUnits) {
+        this.setProductUnits(productUnits);
+        return this;
+    }
+
+    public Product addProductUnit(ProductUnit productUnit) {
+        this.productUnits.add(productUnit);
+        productUnit.getProducts().add(this);
+        return this;
+    }
+
+    public Product removeProductUnit(ProductUnit productUnit) {
+        this.productUnits.remove(productUnit);
+        productUnit.getProducts().remove(this);
+        return this;
+    }
+
+    public void setProductUnits(Set<ProductUnit> productUnits) {
+        this.productUnits = productUnits;
+    }
+
     public ProductCategory getProductCategory() {
         return this.productCategory;
     }
@@ -88,19 +121,6 @@ public class Product implements Serializable {
 
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
-    }
-
-    public ProductUnit getProductUnit() {
-        return this.productUnit;
-    }
-
-    public Product productUnit(ProductUnit productUnit) {
-        this.setProductUnit(productUnit);
-        return this;
-    }
-
-    public void setProductUnit(ProductUnit productUnit) {
-        this.productUnit = productUnit;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

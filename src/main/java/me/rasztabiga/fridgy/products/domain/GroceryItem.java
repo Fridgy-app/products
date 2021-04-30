@@ -31,7 +31,7 @@ public class GroceryItem implements Serializable {
     private User user;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "productCategory", "productUnit" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "productUnits", "productCategory" }, allowSetters = true)
     private Product product;
 
     @ManyToOne

@@ -23,11 +23,22 @@
             <column name="product_category_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-            <column name="product_unit_id" type="bigint">
-                <constraints nullable="true" />
-            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
+    </changeSet>
+
+    <changeSet id="20210430121345-1-relations" author="jhipster">
+
+        <createTable tableName="rel_product__product_unit">
+            <column name="product_unit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="product_id, product_unit_id" tableName="rel_product__product_unit"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->

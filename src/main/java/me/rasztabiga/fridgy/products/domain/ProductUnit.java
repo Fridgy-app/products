@@ -28,9 +28,9 @@ public class ProductUnit implements Serializable {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "productUnit")
+    @ManyToMany(mappedBy = "productUnits")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "productCategory", "productUnit" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "productUnits", "productCategory" }, allowSetters = true)
     private Set<Product> products = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -71,22 +71,22 @@ public class ProductUnit implements Serializable {
 
     public ProductUnit addProduct(Product product) {
         this.products.add(product);
-        product.setProductUnit(this);
+        product.getProductUnits().add(this);
         return this;
     }
 
     public ProductUnit removeProduct(Product product) {
         this.products.remove(product);
-        product.setProductUnit(null);
+        product.getProductUnits().remove(this);
         return this;
     }
 
     public void setProducts(Set<Product> products) {
         if (this.products != null) {
-            this.products.forEach(i -> i.setProductUnit(null));
+            this.products.forEach(i -> i.removeProductUnit(this));
         }
         if (products != null) {
-            products.forEach(i -> i.setProductUnit(this));
+            products.forEach(i -> i.addProductUnit(this));
         }
         this.products = products;
     }

@@ -9,10 +9,11 @@
   ],
   "relationships": [
     {
-      "relationshipType": "one-to-many",
+      "relationshipType": "many-to-many",
       "otherEntityName": "product",
       "otherEntityRelationshipName": "productUnit",
-      "relationshipName": "product"
+      "relationshipName": "product",
+      "ownerSide": false
     }
   ],
   "entityTableName": "product_unit",

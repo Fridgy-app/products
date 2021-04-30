@@ -8,16 +8,22 @@
     -->
     <changeSet id="20210430121345-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="product_id"
+                                 baseTableName="rel_product__product_unit"
+                                 constraintName="fk_rel_product__product_unit__product_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="product"/>
+
+        <addForeignKeyConstraint baseColumnNames="product_unit_id"
+                                 baseTableName="rel_product__product_unit"
+                                 constraintName="fk_rel_product__product_unit__product_unit_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="product_unit"/>
+
         <addForeignKeyConstraint baseColumnNames="product_category_id"
                                  baseTableName="product"
                                  constraintName="fk_product__product_category_id"
                                  referencedColumnNames="id"
                                  referencedTableName="product_category"/>
-
-        <addForeignKeyConstraint baseColumnNames="product_unit_id"
-                                 baseTableName="product"
-                                 constraintName="fk_product__product_unit_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="product_unit"/>
     </changeSet>
 </databaseChangeLog>
