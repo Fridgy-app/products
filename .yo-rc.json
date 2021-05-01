@@ -39,10 +39,10 @@
     "clientThemeVariant": "",
     "withAdminUi": true,
     "nativeLanguage": "en",
-    "creationTimestamp": 1619792358715,
-    "jwtSecretKey": "OTQ2ZTQ2YjdlYTJmZTMyZjEyZWYxYTg1OTQyMzJmZmVlOGI3NjQ0NmZjYTMyZTJlNGU2MDg0NjJmZDUyZWVjM2I2MzQ4MGNjNDRkYjJhZTEyMjRlOGY0MGE3MGU4MjU1NmQ5ZWM3YjYzOGU4MjU5NWIzYTIzNzg4MzA5OGRjYmQ=",
+    "creationTimestamp": 1619909071572,
+    "jwtSecretKey": "NmY1NGM0NDA1NGIzNWNjZWE0ZDgzODA2YmE2OTg2ODUxOWE2ZTFhMjE5YzIyZjkzNDliZDczNTc1YTdhNzBkMTU4NjQwMmM4MjhiYjNhZWE3YzBlOWQyMmU3ZjU0NDliZWFkY2ZmNzRmNGI4NGVjZDIzNjllNzllOGM5MmE1YWQ=",
     "entities": ["GroceryItem", "RecipeIngredient", "ProductUnit", "Product", "Recipe", "ProductCategory"],
-    "lastLiquibaseTimestamp": 1619792718000,
+    "lastLiquibaseTimestamp": 1619909431000,
     "appFolder": "products",
     "targetImageName": "fridgy/products",
     "dbPeerCount": 1
