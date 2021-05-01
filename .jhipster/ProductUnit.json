@@ -17,7 +17,7 @@
     }
   ],
   "entityTableName": "product_unit",
-  "dto": "no",
+  "dto": "mapstruct",
   "pagination": "no",
   "service": "serviceClass",
   "jpaMetamodelFiltering": false,
@@ -28,5 +28,5 @@
   "microserviceName": "products",
   "clientRootFolder": "products",
   "databaseType": "sql",
-  "changelogDate": "20210501224731"
+  "changelogDate": "20210501230148"
 }

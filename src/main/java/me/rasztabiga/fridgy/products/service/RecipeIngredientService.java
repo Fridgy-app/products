@@ -1,9 +1,13 @@
 package me.rasztabiga.fridgy.products.service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import me.rasztabiga.fridgy.products.domain.RecipeIngredient;
 import me.rasztabiga.fridgy.products.repository.RecipeIngredientRepository;
+import me.rasztabiga.fridgy.products.service.dto.RecipeIngredientDTO;
+import me.rasztabiga.fridgy.products.service.mapper.RecipeIngredientMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,42 +24,45 @@ public class RecipeIngredientService {
 
     private final RecipeIngredientRepository recipeIngredientRepository;
 
-    public RecipeIngredientService(RecipeIngredientRepository recipeIngredientRepository) {
+    private final RecipeIngredientMapper recipeIngredientMapper;
+
+    public RecipeIngredientService(RecipeIngredientRepository recipeIngredientRepository, RecipeIngredientMapper recipeIngredientMapper) {
         this.recipeIngredientRepository = recipeIngredientRepository;
+        this.recipeIngredientMapper = recipeIngredientMapper;
     }
 
     /**
      * Save a recipeIngredient.
      *
-     * @param recipeIngredient the entity to save.
+     * @param recipeIngredientDTO the entity to save.
      * @return the persisted entity.
      */
-    public RecipeIngredient save(RecipeIngredient recipeIngredient) {
-        log.debug("Request to save RecipeIngredient : {}", recipeIngredient);
-        return recipeIngredientRepository.save(recipeIngredient);
+    public RecipeIngredientDTO save(RecipeIngredientDTO recipeIngredientDTO) {
+        log.debug("Request to save RecipeIngredient : {}", recipeIngredientDTO);
+        RecipeIngredient recipeIngredient = recipeIngredientMapper.toEntity(recipeIngredientDTO);
+        recipeIngredient = recipeIngredientRepository.save(recipeIngredient);
+        return recipeIngredientMapper.toDto(recipeIngredient);
     }
 
     /**
      * Partially update a recipeIngredient.
      *
-     * @param recipeIngredient the entity to update partially.
+     * @param recipeIngredientDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<RecipeIngredient> partialUpdate(RecipeIngredient recipeIngredient) {
-        log.debug("Request to partially update RecipeIngredient : {}", recipeIngredient);
+    public Optional<RecipeIngredientDTO> partialUpdate(RecipeIngredientDTO recipeIngredientDTO) {
+        log.debug("Request to partially update RecipeIngredient : {}", recipeIngredientDTO);
 
         return recipeIngredientRepository
-            .findById(recipeIngredient.getId())
+            .findById(recipeIngredientDTO.getId())
             .map(
                 existingRecipeIngredient -> {
-                    if (recipeIngredient.getQuantity() != null) {
-                        existingRecipeIngredient.setQuantity(recipeIngredient.getQuantity());
-                    }
-
+                    recipeIngredientMapper.partialUpdate(existingRecipeIngredient, recipeIngredientDTO);
                     return existingRecipeIngredient;
                 }
             )
-            .map(recipeIngredientRepository::save);
+            .map(recipeIngredientRepository::save)
+            .map(recipeIngredientMapper::toDto);
     }
 
     /**
@@ -64,9 +71,13 @@ public class RecipeIngredientService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<RecipeIngredient> findAll() {
+    public List<RecipeIngredientDTO> findAll() {
         log.debug("Request to get all RecipeIngredients");
-        return recipeIngredientRepository.findAll();
+        return recipeIngredientRepository
+            .findAll()
+            .stream()
+            .map(recipeIngredientMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -76,9 +87,9 @@ public class RecipeIngredientService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<RecipeIngredient> findOne(Long id) {
+    public Optional<RecipeIngredientDTO> findOne(Long id) {
         log.debug("Request to get RecipeIngredient : {}", id);
-        return recipeIngredientRepository.findById(id);
+        return recipeIngredientRepository.findById(id).map(recipeIngredientMapper::toDto);
     }
 
     /**

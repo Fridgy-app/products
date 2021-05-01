@@ -1,9 +1,13 @@
 package me.rasztabiga.fridgy.products.service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import me.rasztabiga.fridgy.products.domain.ProductCategory;
 import me.rasztabiga.fridgy.products.repository.ProductCategoryRepository;
+import me.rasztabiga.fridgy.products.service.dto.ProductCategoryDTO;
+import me.rasztabiga.fridgy.products.service.mapper.ProductCategoryMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,42 +24,45 @@ public class ProductCategoryService {
 
     private final ProductCategoryRepository productCategoryRepository;
 
-    public ProductCategoryService(ProductCategoryRepository productCategoryRepository) {
+    private final ProductCategoryMapper productCategoryMapper;
+
+    public ProductCategoryService(ProductCategoryRepository productCategoryRepository, ProductCategoryMapper productCategoryMapper) {
         this.productCategoryRepository = productCategoryRepository;
+        this.productCategoryMapper = productCategoryMapper;
     }
 
     /**
      * Save a productCategory.
      *
-     * @param productCategory the entity to save.
+     * @param productCategoryDTO the entity to save.
      * @return the persisted entity.
      */
-    public ProductCategory save(ProductCategory productCategory) {
-        log.debug("Request to save ProductCategory : {}", productCategory);
-        return productCategoryRepository.save(productCategory);
+    public ProductCategoryDTO save(ProductCategoryDTO productCategoryDTO) {
+        log.debug("Request to save ProductCategory : {}", productCategoryDTO);
+        ProductCategory productCategory = productCategoryMapper.toEntity(productCategoryDTO);
+        productCategory = productCategoryRepository.save(productCategory);
+        return productCategoryMapper.toDto(productCategory);
     }
 
     /**
      * Partially update a productCategory.
      *
-     * @param productCategory the entity to update partially.
+     * @param productCategoryDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<ProductCategory> partialUpdate(ProductCategory productCategory) {
-        log.debug("Request to partially update ProductCategory : {}", productCategory);
+    public Optional<ProductCategoryDTO> partialUpdate(ProductCategoryDTO productCategoryDTO) {
+        log.debug("Request to partially update ProductCategory : {}", productCategoryDTO);
 
         return productCategoryRepository
-            .findById(productCategory.getId())
+            .findById(productCategoryDTO.getId())
             .map(
                 existingProductCategory -> {
-                    if (productCategory.getName() != null) {
-                        existingProductCategory.setName(productCategory.getName());
-                    }
-
+                    productCategoryMapper.partialUpdate(existingProductCategory, productCategoryDTO);
                     return existingProductCategory;
                 }
             )
-            .map(productCategoryRepository::save);
+            .map(productCategoryRepository::save)
+            .map(productCategoryMapper::toDto);
     }
 
     /**
@@ -64,9 +71,13 @@ public class ProductCategoryService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<ProductCategory> findAll() {
+    public List<ProductCategoryDTO> findAll() {
         log.debug("Request to get all ProductCategories");
-        return productCategoryRepository.findAll();
+        return productCategoryRepository
+            .findAll()
+            .stream()
+            .map(productCategoryMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -76,9 +87,9 @@ public class ProductCategoryService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<ProductCategory> findOne(Long id) {
+    public Optional<ProductCategoryDTO> findOne(Long id) {
         log.debug("Request to get ProductCategory : {}", id);
-        return productCategoryRepository.findById(id);
+        return productCategoryRepository.findById(id).map(productCategoryMapper::toDto);
     }
 
     /**

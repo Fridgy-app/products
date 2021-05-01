@@ -5,9 +5,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import me.rasztabiga.fridgy.products.domain.RecipeIngredient;
 import me.rasztabiga.fridgy.products.repository.RecipeIngredientRepository;
 import me.rasztabiga.fridgy.products.service.RecipeIngredientService;
+import me.rasztabiga.fridgy.products.service.dto.RecipeIngredientDTO;
 import me.rasztabiga.fridgy.products.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,18 +46,18 @@ public class RecipeIngredientResource {
     /**
      * {@code POST  /recipe-ingredients} : Create a new recipeIngredient.
      *
-     * @param recipeIngredient the recipeIngredient to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new recipeIngredient, or with status {@code 400 (Bad Request)} if the recipeIngredient has already an ID.
+     * @param recipeIngredientDTO the recipeIngredientDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new recipeIngredientDTO, or with status {@code 400 (Bad Request)} if the recipeIngredient has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/recipe-ingredients")
-    public ResponseEntity<RecipeIngredient> createRecipeIngredient(@RequestBody RecipeIngredient recipeIngredient)
+    public ResponseEntity<RecipeIngredientDTO> createRecipeIngredient(@RequestBody RecipeIngredientDTO recipeIngredientDTO)
         throws URISyntaxException {
-        log.debug("REST request to save RecipeIngredient : {}", recipeIngredient);
-        if (recipeIngredient.getId() != null) {
+        log.debug("REST request to save RecipeIngredient : {}", recipeIngredientDTO);
+        if (recipeIngredientDTO.getId() != null) {
             throw new BadRequestAlertException("A new recipeIngredient cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        RecipeIngredient result = recipeIngredientService.save(recipeIngredient);
+        RecipeIngredientDTO result = recipeIngredientService.save(recipeIngredientDTO);
         return ResponseEntity
             .created(new URI("/api/recipe-ingredients/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -67,23 +67,23 @@ public class RecipeIngredientResource {
     /**
      * {@code PUT  /recipe-ingredients/:id} : Updates an existing recipeIngredient.
      *
-     * @param id the id of the recipeIngredient to save.
-     * @param recipeIngredient the recipeIngredient to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated recipeIngredient,
-     * or with status {@code 400 (Bad Request)} if the recipeIngredient is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the recipeIngredient couldn't be updated.
+     * @param id the id of the recipeIngredientDTO to save.
+     * @param recipeIngredientDTO the recipeIngredientDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated recipeIngredientDTO,
+     * or with status {@code 400 (Bad Request)} if the recipeIngredientDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the recipeIngredientDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/recipe-ingredients/{id}")
-    public ResponseEntity<RecipeIngredient> updateRecipeIngredient(
+    public ResponseEntity<RecipeIngredientDTO> updateRecipeIngredient(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody RecipeIngredient recipeIngredient
+        @RequestBody RecipeIngredientDTO recipeIngredientDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update RecipeIngredient : {}, {}", id, recipeIngredient);
-        if (recipeIngredient.getId() == null) {
+        log.debug("REST request to update RecipeIngredient : {}, {}", id, recipeIngredientDTO);
+        if (recipeIngredientDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, recipeIngredient.getId())) {
+        if (!Objects.equals(id, recipeIngredientDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -91,34 +91,34 @@ public class RecipeIngredientResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        RecipeIngredient result = recipeIngredientService.save(recipeIngredient);
+        RecipeIngredientDTO result = recipeIngredientService.save(recipeIngredientDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, recipeIngredient.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, recipeIngredientDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /recipe-ingredients/:id} : Partial updates given fields of an existing recipeIngredient, field will ignore if it is null
      *
-     * @param id the id of the recipeIngredient to save.
-     * @param recipeIngredient the recipeIngredient to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated recipeIngredient,
-     * or with status {@code 400 (Bad Request)} if the recipeIngredient is not valid,
-     * or with status {@code 404 (Not Found)} if the recipeIngredient is not found,
-     * or with status {@code 500 (Internal Server Error)} if the recipeIngredient couldn't be updated.
+     * @param id the id of the recipeIngredientDTO to save.
+     * @param recipeIngredientDTO the recipeIngredientDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated recipeIngredientDTO,
+     * or with status {@code 400 (Bad Request)} if the recipeIngredientDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the recipeIngredientDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the recipeIngredientDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/recipe-ingredients/{id}", consumes = "application/merge-patch+json")
-    public ResponseEntity<RecipeIngredient> partialUpdateRecipeIngredient(
+    public ResponseEntity<RecipeIngredientDTO> partialUpdateRecipeIngredient(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody RecipeIngredient recipeIngredient
+        @RequestBody RecipeIngredientDTO recipeIngredientDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update RecipeIngredient partially : {}, {}", id, recipeIngredient);
-        if (recipeIngredient.getId() == null) {
+        log.debug("REST request to partial update RecipeIngredient partially : {}, {}", id, recipeIngredientDTO);
+        if (recipeIngredientDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, recipeIngredient.getId())) {
+        if (!Objects.equals(id, recipeIngredientDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -126,11 +126,11 @@ public class RecipeIngredientResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<RecipeIngredient> result = recipeIngredientService.partialUpdate(recipeIngredient);
+        Optional<RecipeIngredientDTO> result = recipeIngredientService.partialUpdate(recipeIngredientDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, recipeIngredient.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, recipeIngredientDTO.getId().toString())
         );
     }
 
@@ -140,7 +140,7 @@ public class RecipeIngredientResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of recipeIngredients in body.
      */
     @GetMapping("/recipe-ingredients")
-    public List<RecipeIngredient> getAllRecipeIngredients() {
+    public List<RecipeIngredientDTO> getAllRecipeIngredients() {
         log.debug("REST request to get all RecipeIngredients");
         return recipeIngredientService.findAll();
     }
@@ -148,20 +148,20 @@ public class RecipeIngredientResource {
     /**
      * {@code GET  /recipe-ingredients/:id} : get the "id" recipeIngredient.
      *
-     * @param id the id of the recipeIngredient to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the recipeIngredient, or with status {@code 404 (Not Found)}.
+     * @param id the id of the recipeIngredientDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the recipeIngredientDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/recipe-ingredients/{id}")
-    public ResponseEntity<RecipeIngredient> getRecipeIngredient(@PathVariable Long id) {
+    public ResponseEntity<RecipeIngredientDTO> getRecipeIngredient(@PathVariable Long id) {
         log.debug("REST request to get RecipeIngredient : {}", id);
-        Optional<RecipeIngredient> recipeIngredient = recipeIngredientService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(recipeIngredient);
+        Optional<RecipeIngredientDTO> recipeIngredientDTO = recipeIngredientService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(recipeIngredientDTO);
     }
 
     /**
      * {@code DELETE  /recipe-ingredients/:id} : delete the "id" recipeIngredient.
      *
-     * @param id the id of the recipeIngredient to delete.
+     * @param id the id of the recipeIngredientDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/recipe-ingredients/{id}")

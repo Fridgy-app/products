@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 import me.rasztabiga.fridgy.products.IntegrationTest;
 import me.rasztabiga.fridgy.products.domain.RecipeIngredient;
 import me.rasztabiga.fridgy.products.repository.RecipeIngredientRepository;
+import me.rasztabiga.fridgy.products.service.dto.RecipeIngredientDTO;
+import me.rasztabiga.fridgy.products.service.mapper.RecipeIngredientMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ class RecipeIngredientResourceIT {
 
     @Autowired
     private RecipeIngredientRepository recipeIngredientRepository;
+
+    @Autowired
+    private RecipeIngredientMapper recipeIngredientMapper;
 
     @Autowired
     private EntityManager em;
@@ -82,12 +87,13 @@ class RecipeIngredientResourceIT {
     void createRecipeIngredient() throws Exception {
         int databaseSizeBeforeCreate = recipeIngredientRepository.findAll().size();
         // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
         restRecipeIngredientMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isCreated());
 
@@ -103,6 +109,7 @@ class RecipeIngredientResourceIT {
     void createRecipeIngredientWithExistingId() throws Exception {
         // Create the RecipeIngredient with an existing ID
         recipeIngredient.setId(1L);
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
 
         int databaseSizeBeforeCreate = recipeIngredientRepository.findAll().size();
 
@@ -112,7 +119,7 @@ class RecipeIngredientResourceIT {
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -171,13 +178,14 @@ class RecipeIngredientResourceIT {
         // Disconnect from session so that the updates on updatedRecipeIngredient are not directly saved in db
         em.detach(updatedRecipeIngredient);
         updatedRecipeIngredient.quantity(UPDATED_QUANTITY);
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(updatedRecipeIngredient);
 
         restRecipeIngredientMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedRecipeIngredient.getId())
+                put(ENTITY_API_URL_ID, recipeIngredientDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedRecipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isOk());
 
@@ -194,13 +202,16 @@ class RecipeIngredientResourceIT {
         int databaseSizeBeforeUpdate = recipeIngredientRepository.findAll().size();
         recipeIngredient.setId(count.incrementAndGet());
 
+        // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRecipeIngredientMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, recipeIngredient.getId())
+                put(ENTITY_API_URL_ID, recipeIngredientDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -215,13 +226,16 @@ class RecipeIngredientResourceIT {
         int databaseSizeBeforeUpdate = recipeIngredientRepository.findAll().size();
         recipeIngredient.setId(count.incrementAndGet());
 
+        // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRecipeIngredientMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,13 +250,16 @@ class RecipeIngredientResourceIT {
         int databaseSizeBeforeUpdate = recipeIngredientRepository.findAll().size();
         recipeIngredient.setId(count.incrementAndGet());
 
+        // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRecipeIngredientMockMvc
             .perform(
                 put(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -315,13 +332,16 @@ class RecipeIngredientResourceIT {
         int databaseSizeBeforeUpdate = recipeIngredientRepository.findAll().size();
         recipeIngredient.setId(count.incrementAndGet());
 
+        // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRecipeIngredientMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, recipeIngredient.getId())
+                patch(ENTITY_API_URL_ID, recipeIngredientDTO.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -336,13 +356,16 @@ class RecipeIngredientResourceIT {
         int databaseSizeBeforeUpdate = recipeIngredientRepository.findAll().size();
         recipeIngredient.setId(count.incrementAndGet());
 
+        // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRecipeIngredientMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -357,13 +380,16 @@ class RecipeIngredientResourceIT {
         int databaseSizeBeforeUpdate = recipeIngredientRepository.findAll().size();
         recipeIngredient.setId(count.incrementAndGet());
 
+        // Create the RecipeIngredient
+        RecipeIngredientDTO recipeIngredientDTO = recipeIngredientMapper.toDto(recipeIngredient);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restRecipeIngredientMockMvc
             .perform(
                 patch(ENTITY_API_URL)
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredient))
+                    .content(TestUtil.convertObjectToJsonBytes(recipeIngredientDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

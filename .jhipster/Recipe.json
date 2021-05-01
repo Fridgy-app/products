@@ -21,7 +21,7 @@
     }
   ],
   "entityTableName": "recipe",
-  "dto": "no",
+  "dto": "mapstruct",
   "pagination": "pagination",
   "service": "serviceClass",
   "jpaMetamodelFiltering": false,
@@ -32,5 +32,5 @@
   "microserviceName": "products",
   "clientRootFolder": "products",
   "databaseType": "sql",
-  "changelogDate": "20210501224931"
+  "changelogDate": "20210501230348"
 }

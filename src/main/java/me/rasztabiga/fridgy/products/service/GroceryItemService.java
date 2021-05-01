@@ -3,6 +3,8 @@ package me.rasztabiga.fridgy.products.service;
 import java.util.Optional;
 import me.rasztabiga.fridgy.products.domain.GroceryItem;
 import me.rasztabiga.fridgy.products.repository.GroceryItemRepository;
+import me.rasztabiga.fridgy.products.service.dto.GroceryItemDTO;
+import me.rasztabiga.fridgy.products.service.mapper.GroceryItemMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,45 +23,45 @@ public class GroceryItemService {
 
     private final GroceryItemRepository groceryItemRepository;
 
-    public GroceryItemService(GroceryItemRepository groceryItemRepository) {
+    private final GroceryItemMapper groceryItemMapper;
+
+    public GroceryItemService(GroceryItemRepository groceryItemRepository, GroceryItemMapper groceryItemMapper) {
         this.groceryItemRepository = groceryItemRepository;
+        this.groceryItemMapper = groceryItemMapper;
     }
 
     /**
      * Save a groceryItem.
      *
-     * @param groceryItem the entity to save.
+     * @param groceryItemDTO the entity to save.
      * @return the persisted entity.
      */
-    public GroceryItem save(GroceryItem groceryItem) {
-        log.debug("Request to save GroceryItem : {}", groceryItem);
-        return groceryItemRepository.save(groceryItem);
+    public GroceryItemDTO save(GroceryItemDTO groceryItemDTO) {
+        log.debug("Request to save GroceryItem : {}", groceryItemDTO);
+        GroceryItem groceryItem = groceryItemMapper.toEntity(groceryItemDTO);
+        groceryItem = groceryItemRepository.save(groceryItem);
+        return groceryItemMapper.toDto(groceryItem);
     }
 
     /**
      * Partially update a groceryItem.
      *
-     * @param groceryItem the entity to update partially.
+     * @param groceryItemDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<GroceryItem> partialUpdate(GroceryItem groceryItem) {
-        log.debug("Request to partially update GroceryItem : {}", groceryItem);
+    public Optional<GroceryItemDTO> partialUpdate(GroceryItemDTO groceryItemDTO) {
+        log.debug("Request to partially update GroceryItem : {}", groceryItemDTO);
 
         return groceryItemRepository
-            .findById(groceryItem.getId())
+            .findById(groceryItemDTO.getId())
             .map(
                 existingGroceryItem -> {
-                    if (groceryItem.getQuantity() != null) {
-                        existingGroceryItem.setQuantity(groceryItem.getQuantity());
-                    }
-                    if (groceryItem.getDescription() != null) {
-                        existingGroceryItem.setDescription(groceryItem.getDescription());
-                    }
-
+                    groceryItemMapper.partialUpdate(existingGroceryItem, groceryItemDTO);
                     return existingGroceryItem;
                 }
             )
-            .map(groceryItemRepository::save);
+            .map(groceryItemRepository::save)
+            .map(groceryItemMapper::toDto);
     }
 
     /**
@@ -69,9 +71,9 @@ public class GroceryItemService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<GroceryItem> findAll(Pageable pageable) {
+    public Page<GroceryItemDTO> findAll(Pageable pageable) {
         log.debug("Request to get all GroceryItems");
-        return groceryItemRepository.findAll(pageable);
+        return groceryItemRepository.findAll(pageable).map(groceryItemMapper::toDto);
     }
 
     /**
@@ -81,9 +83,9 @@ public class GroceryItemService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<GroceryItem> findOne(Long id) {
+    public Optional<GroceryItemDTO> findOne(Long id) {
         log.debug("Request to get GroceryItem : {}", id);
-        return groceryItemRepository.findById(id);
+        return groceryItemRepository.findById(id).map(groceryItemMapper::toDto);
     }
 
     /**

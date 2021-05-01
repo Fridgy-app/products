@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 import me.rasztabiga.fridgy.products.IntegrationTest;
 import me.rasztabiga.fridgy.products.domain.ProductCategory;
 import me.rasztabiga.fridgy.products.repository.ProductCategoryRepository;
+import me.rasztabiga.fridgy.products.service.dto.ProductCategoryDTO;
+import me.rasztabiga.fridgy.products.service.mapper.ProductCategoryMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ class ProductCategoryResourceIT {
 
     @Autowired
     private ProductCategoryRepository productCategoryRepository;
+
+    @Autowired
+    private ProductCategoryMapper productCategoryMapper;
 
     @Autowired
     private EntityManager em;
@@ -82,12 +87,13 @@ class ProductCategoryResourceIT {
     void createProductCategory() throws Exception {
         int databaseSizeBeforeCreate = productCategoryRepository.findAll().size();
         // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
         restProductCategoryMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isCreated());
 
@@ -103,6 +109,7 @@ class ProductCategoryResourceIT {
     void createProductCategoryWithExistingId() throws Exception {
         // Create the ProductCategory with an existing ID
         productCategory.setId(1L);
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
 
         int databaseSizeBeforeCreate = productCategoryRepository.findAll().size();
 
@@ -112,7 +119,7 @@ class ProductCategoryResourceIT {
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -129,13 +136,14 @@ class ProductCategoryResourceIT {
         productCategory.setName(null);
 
         // Create the ProductCategory, which fails.
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
 
         restProductCategoryMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -193,13 +201,14 @@ class ProductCategoryResourceIT {
         // Disconnect from session so that the updates on updatedProductCategory are not directly saved in db
         em.detach(updatedProductCategory);
         updatedProductCategory.name(UPDATED_NAME);
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(updatedProductCategory);
 
         restProductCategoryMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedProductCategory.getId())
+                put(ENTITY_API_URL_ID, productCategoryDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedProductCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isOk());
 
@@ -216,13 +225,16 @@ class ProductCategoryResourceIT {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
         productCategory.setId(count.incrementAndGet());
 
+        // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, productCategory.getId())
+                put(ENTITY_API_URL_ID, productCategoryDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -237,13 +249,16 @@ class ProductCategoryResourceIT {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
         productCategory.setId(count.incrementAndGet());
 
+        // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -258,13 +273,16 @@ class ProductCategoryResourceIT {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
         productCategory.setId(count.incrementAndGet());
 
+        // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc
             .perform(
                 put(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -337,13 +355,16 @@ class ProductCategoryResourceIT {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
         productCategory.setId(count.incrementAndGet());
 
+        // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, productCategory.getId())
+                patch(ENTITY_API_URL_ID, productCategoryDTO.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -358,13 +379,16 @@ class ProductCategoryResourceIT {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
         productCategory.setId(count.incrementAndGet());
 
+        // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -379,13 +403,16 @@ class ProductCategoryResourceIT {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
         productCategory.setId(count.incrementAndGet());
 
+        // Create the ProductCategory
+        ProductCategoryDTO productCategoryDTO = productCategoryMapper.toDto(productCategory);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc
             .perform(
                 patch(ENTITY_API_URL)
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(productCategory))
+                    .content(TestUtil.convertObjectToJsonBytes(productCategoryDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

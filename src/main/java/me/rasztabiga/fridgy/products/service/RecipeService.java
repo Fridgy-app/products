@@ -3,6 +3,8 @@ package me.rasztabiga.fridgy.products.service;
 import java.util.Optional;
 import me.rasztabiga.fridgy.products.domain.Recipe;
 import me.rasztabiga.fridgy.products.repository.RecipeRepository;
+import me.rasztabiga.fridgy.products.service.dto.RecipeDTO;
+import me.rasztabiga.fridgy.products.service.mapper.RecipeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,45 +23,45 @@ public class RecipeService {
 
     private final RecipeRepository recipeRepository;
 
-    public RecipeService(RecipeRepository recipeRepository) {
+    private final RecipeMapper recipeMapper;
+
+    public RecipeService(RecipeRepository recipeRepository, RecipeMapper recipeMapper) {
         this.recipeRepository = recipeRepository;
+        this.recipeMapper = recipeMapper;
     }
 
     /**
      * Save a recipe.
      *
-     * @param recipe the entity to save.
+     * @param recipeDTO the entity to save.
      * @return the persisted entity.
      */
-    public Recipe save(Recipe recipe) {
-        log.debug("Request to save Recipe : {}", recipe);
-        return recipeRepository.save(recipe);
+    public RecipeDTO save(RecipeDTO recipeDTO) {
+        log.debug("Request to save Recipe : {}", recipeDTO);
+        Recipe recipe = recipeMapper.toEntity(recipeDTO);
+        recipe = recipeRepository.save(recipe);
+        return recipeMapper.toDto(recipe);
     }
 
     /**
      * Partially update a recipe.
      *
-     * @param recipe the entity to update partially.
+     * @param recipeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Recipe> partialUpdate(Recipe recipe) {
-        log.debug("Request to partially update Recipe : {}", recipe);
+    public Optional<RecipeDTO> partialUpdate(RecipeDTO recipeDTO) {
+        log.debug("Request to partially update Recipe : {}", recipeDTO);
 
         return recipeRepository
-            .findById(recipe.getId())
+            .findById(recipeDTO.getId())
             .map(
                 existingRecipe -> {
-                    if (recipe.getName() != null) {
-                        existingRecipe.setName(recipe.getName());
-                    }
-                    if (recipe.getInstructionsBody() != null) {
-                        existingRecipe.setInstructionsBody(recipe.getInstructionsBody());
-                    }
-
+                    recipeMapper.partialUpdate(existingRecipe, recipeDTO);
                     return existingRecipe;
                 }
             )
-            .map(recipeRepository::save);
+            .map(recipeRepository::save)
+            .map(recipeMapper::toDto);
     }
 
     /**
@@ -69,9 +71,9 @@ public class RecipeService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Recipe> findAll(Pageable pageable) {
+    public Page<RecipeDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Recipes");
-        return recipeRepository.findAll(pageable);
+        return recipeRepository.findAll(pageable).map(recipeMapper::toDto);
     }
 
     /**
@@ -81,9 +83,9 @@ public class RecipeService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Recipe> findOne(Long id) {
+    public Optional<RecipeDTO> findOne(Long id) {
         log.debug("Request to get Recipe : {}", id);
-        return recipeRepository.findById(id);
+        return recipeRepository.findById(id).map(recipeMapper::toDto);
     }
 
     /**

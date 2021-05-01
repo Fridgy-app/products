@@ -13,7 +13,8 @@ import javax.persistence.EntityManager;
 import me.rasztabiga.fridgy.products.IntegrationTest;
 import me.rasztabiga.fridgy.products.domain.GroceryItem;
 import me.rasztabiga.fridgy.products.repository.GroceryItemRepository;
-import me.rasztabiga.fridgy.products.repository.UserRepository;
+import me.rasztabiga.fridgy.products.service.dto.GroceryItemDTO;
+import me.rasztabiga.fridgy.products.service.mapper.GroceryItemMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ class GroceryItemResourceIT {
     private GroceryItemRepository groceryItemRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private GroceryItemMapper groceryItemMapper;
 
     @Autowired
     private EntityManager em;
@@ -89,12 +90,13 @@ class GroceryItemResourceIT {
     void createGroceryItem() throws Exception {
         int databaseSizeBeforeCreate = groceryItemRepository.findAll().size();
         // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
         restGroceryItemMockMvc
             .perform(
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isCreated());
 
@@ -111,6 +113,7 @@ class GroceryItemResourceIT {
     void createGroceryItemWithExistingId() throws Exception {
         // Create the GroceryItem with an existing ID
         groceryItem.setId(1L);
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
 
         int databaseSizeBeforeCreate = groceryItemRepository.findAll().size();
 
@@ -120,7 +123,7 @@ class GroceryItemResourceIT {
                 post(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -181,13 +184,14 @@ class GroceryItemResourceIT {
         // Disconnect from session so that the updates on updatedGroceryItem are not directly saved in db
         em.detach(updatedGroceryItem);
         updatedGroceryItem.quantity(UPDATED_QUANTITY).description(UPDATED_DESCRIPTION);
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(updatedGroceryItem);
 
         restGroceryItemMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedGroceryItem.getId())
+                put(ENTITY_API_URL_ID, groceryItemDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedGroceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isOk());
 
@@ -205,13 +209,16 @@ class GroceryItemResourceIT {
         int databaseSizeBeforeUpdate = groceryItemRepository.findAll().size();
         groceryItem.setId(count.incrementAndGet());
 
+        // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restGroceryItemMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, groceryItem.getId())
+                put(ENTITY_API_URL_ID, groceryItemDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -226,13 +233,16 @@ class GroceryItemResourceIT {
         int databaseSizeBeforeUpdate = groceryItemRepository.findAll().size();
         groceryItem.setId(count.incrementAndGet());
 
+        // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGroceryItemMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -247,13 +257,16 @@ class GroceryItemResourceIT {
         int databaseSizeBeforeUpdate = groceryItemRepository.findAll().size();
         groceryItem.setId(count.incrementAndGet());
 
+        // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGroceryItemMockMvc
             .perform(
                 put(ENTITY_API_URL)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -330,13 +343,16 @@ class GroceryItemResourceIT {
         int databaseSizeBeforeUpdate = groceryItemRepository.findAll().size();
         groceryItem.setId(count.incrementAndGet());
 
+        // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restGroceryItemMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, groceryItem.getId())
+                patch(ENTITY_API_URL_ID, groceryItemDTO.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -351,13 +367,16 @@ class GroceryItemResourceIT {
         int databaseSizeBeforeUpdate = groceryItemRepository.findAll().size();
         groceryItem.setId(count.incrementAndGet());
 
+        // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGroceryItemMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -372,13 +391,16 @@ class GroceryItemResourceIT {
         int databaseSizeBeforeUpdate = groceryItemRepository.findAll().size();
         groceryItem.setId(count.incrementAndGet());
 
+        // Create the GroceryItem
+        GroceryItemDTO groceryItemDTO = groceryItemMapper.toDto(groceryItem);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGroceryItemMockMvc
             .perform(
                 patch(ENTITY_API_URL)
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(groceryItem))
+                    .content(TestUtil.convertObjectToJsonBytes(groceryItemDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

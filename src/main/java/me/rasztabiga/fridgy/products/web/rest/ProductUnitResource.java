@@ -7,9 +7,9 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import me.rasztabiga.fridgy.products.domain.ProductUnit;
 import me.rasztabiga.fridgy.products.repository.ProductUnitRepository;
 import me.rasztabiga.fridgy.products.service.ProductUnitService;
+import me.rasztabiga.fridgy.products.service.dto.ProductUnitDTO;
 import me.rasztabiga.fridgy.products.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +45,17 @@ public class ProductUnitResource {
     /**
      * {@code POST  /product-units} : Create a new productUnit.
      *
-     * @param productUnit the productUnit to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new productUnit, or with status {@code 400 (Bad Request)} if the productUnit has already an ID.
+     * @param productUnitDTO the productUnitDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new productUnitDTO, or with status {@code 400 (Bad Request)} if the productUnit has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/product-units")
-    public ResponseEntity<ProductUnit> createProductUnit(@Valid @RequestBody ProductUnit productUnit) throws URISyntaxException {
-        log.debug("REST request to save ProductUnit : {}", productUnit);
-        if (productUnit.getId() != null) {
+    public ResponseEntity<ProductUnitDTO> createProductUnit(@Valid @RequestBody ProductUnitDTO productUnitDTO) throws URISyntaxException {
+        log.debug("REST request to save ProductUnit : {}", productUnitDTO);
+        if (productUnitDTO.getId() != null) {
             throw new BadRequestAlertException("A new productUnit cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ProductUnit result = productUnitService.save(productUnit);
+        ProductUnitDTO result = productUnitService.save(productUnitDTO);
         return ResponseEntity
             .created(new URI("/api/product-units/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -65,23 +65,23 @@ public class ProductUnitResource {
     /**
      * {@code PUT  /product-units/:id} : Updates an existing productUnit.
      *
-     * @param id the id of the productUnit to save.
-     * @param productUnit the productUnit to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productUnit,
-     * or with status {@code 400 (Bad Request)} if the productUnit is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the productUnit couldn't be updated.
+     * @param id the id of the productUnitDTO to save.
+     * @param productUnitDTO the productUnitDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productUnitDTO,
+     * or with status {@code 400 (Bad Request)} if the productUnitDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the productUnitDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/product-units/{id}")
-    public ResponseEntity<ProductUnit> updateProductUnit(
+    public ResponseEntity<ProductUnitDTO> updateProductUnit(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody ProductUnit productUnit
+        @Valid @RequestBody ProductUnitDTO productUnitDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update ProductUnit : {}, {}", id, productUnit);
-        if (productUnit.getId() == null) {
+        log.debug("REST request to update ProductUnit : {}, {}", id, productUnitDTO);
+        if (productUnitDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, productUnit.getId())) {
+        if (!Objects.equals(id, productUnitDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -89,34 +89,34 @@ public class ProductUnitResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        ProductUnit result = productUnitService.save(productUnit);
+        ProductUnitDTO result = productUnitService.save(productUnitDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productUnit.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productUnitDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /product-units/:id} : Partial updates given fields of an existing productUnit, field will ignore if it is null
      *
-     * @param id the id of the productUnit to save.
-     * @param productUnit the productUnit to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productUnit,
-     * or with status {@code 400 (Bad Request)} if the productUnit is not valid,
-     * or with status {@code 404 (Not Found)} if the productUnit is not found,
-     * or with status {@code 500 (Internal Server Error)} if the productUnit couldn't be updated.
+     * @param id the id of the productUnitDTO to save.
+     * @param productUnitDTO the productUnitDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated productUnitDTO,
+     * or with status {@code 400 (Bad Request)} if the productUnitDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the productUnitDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the productUnitDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/product-units/{id}", consumes = "application/merge-patch+json")
-    public ResponseEntity<ProductUnit> partialUpdateProductUnit(
+    public ResponseEntity<ProductUnitDTO> partialUpdateProductUnit(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody ProductUnit productUnit
+        @NotNull @RequestBody ProductUnitDTO productUnitDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update ProductUnit partially : {}, {}", id, productUnit);
-        if (productUnit.getId() == null) {
+        log.debug("REST request to partial update ProductUnit partially : {}, {}", id, productUnitDTO);
+        if (productUnitDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, productUnit.getId())) {
+        if (!Objects.equals(id, productUnitDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -124,11 +124,11 @@ public class ProductUnitResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<ProductUnit> result = productUnitService.partialUpdate(productUnit);
+        Optional<ProductUnitDTO> result = productUnitService.partialUpdate(productUnitDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productUnit.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, productUnitDTO.getId().toString())
         );
     }
 
@@ -138,7 +138,7 @@ public class ProductUnitResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of productUnits in body.
      */
     @GetMapping("/product-units")
-    public List<ProductUnit> getAllProductUnits() {
+    public List<ProductUnitDTO> getAllProductUnits() {
         log.debug("REST request to get all ProductUnits");
         return productUnitService.findAll();
     }
@@ -146,20 +146,20 @@ public class ProductUnitResource {
     /**
      * {@code GET  /product-units/:id} : get the "id" productUnit.
      *
-     * @param id the id of the productUnit to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the productUnit, or with status {@code 404 (Not Found)}.
+     * @param id the id of the productUnitDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the productUnitDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/product-units/{id}")
-    public ResponseEntity<ProductUnit> getProductUnit(@PathVariable Long id) {
+    public ResponseEntity<ProductUnitDTO> getProductUnit(@PathVariable Long id) {
         log.debug("REST request to get ProductUnit : {}", id);
-        Optional<ProductUnit> productUnit = productUnitService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(productUnit);
+        Optional<ProductUnitDTO> productUnitDTO = productUnitService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(productUnitDTO);
     }
 
     /**
      * {@code DELETE  /product-units/:id} : delete the "id" productUnit.
      *
-     * @param id the id of the productUnit to delete.
+     * @param id the id of the productUnitDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/product-units/{id}")
