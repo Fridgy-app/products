@@ -3,6 +3,11 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlin_version}"
+        classpath "org.jetbrains.kotlin:kotlin-noarg:${kotlin_version}"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:9.4.1"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${detekt_version}"
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
@@ -33,6 +38,7 @@ assert System.properties["java.specification.version"] == "1.8" || "1.9" || "10"
 
 apply from: "gradle/docker.gradle"
 apply from: "gradle/sonar.gradle"
+apply from: 'gradle/kotlin.gradle'
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
 if (project.hasProperty("prod") || project.hasProperty("gae")) {

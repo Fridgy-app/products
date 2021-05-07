@@ -20,6 +20,12 @@
     "skipClient": true,
     "testFrameworks": [],
     "websocket": false,
+    "blueprints": [
+      {
+        "name": "generator-jhipster-kotlin",
+        "version": "1.12.1"
+      }
+    ],
     "applicationType": "microservice",
     "packageName": "me.rasztabiga.fridgy.products",
     "packageFolder": "me/rasztabiga/fridgy/products",
@@ -31,18 +37,22 @@
     "skipServer": false,
     "skipCheckLengthOfIdentifier": false,
     "skipFakeData": false,
-    "blueprints": [],
-    "otherModules": [],
+    "otherModules": [
+      {
+        "name": "generator-jhipster-kotlin",
+        "version": "1.12.1"
+      }
+    ],
     "pages": [],
     "clientFramework": "angularX",
     "clientTheme": "none",
     "clientThemeVariant": "",
     "withAdminUi": true,
     "nativeLanguage": "en",
-    "creationTimestamp": 1619909928984,
-    "jwtSecretKey": "NWViZGY0Y2Y0NzlmM2NiMzJlNjdmODVjZTVkNzkwMmFjZTlmZWJiYWI1OTU3MTFlZjUzZmU0NzgxMGJjOGRhMTQ1ODk1YTc5ZWUxYjRkMDFkZTk2YWFkNzU2ZDYxYWRlODg2ZDliZDcyM2I2YmQ4NWIxN2JkZWU1YmIxZjA4MmM=",
+    "creationTimestamp": 1620396220021,
+    "jwtSecretKey": "MWI3YTU3ZjZkMWQ0NDRiOTBjNGEzYWYxM2E2M2YzZGRkNmVhOGJkNmU0Yjk5NjhlYzcwY2E0NzY5YzFlOWM0MWYyYjhmMDI1NjAzMDk4MDVkMzA2YWNjNTgwMDRkNjZhMDRhZGEwMzc3Y2E5NTIwMjhjMWQxNTViYmY3NTNmNjU=",
     "entities": ["GroceryItem", "RecipeIngredient", "ProductUnit", "Product", "Recipe", "ProductCategory"],
-    "lastLiquibaseTimestamp": 1619910288000,
+    "lastLiquibaseTimestamp": 1620396580000,
     "appFolder": "products",
     "targetImageName": "fridgy/products",
     "dbPeerCount": 1
